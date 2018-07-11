@@ -1,0 +1,23 @@
+
+
+body {
+    max-width: 1000px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+#header{
+    background: #3b5998;
+}
+
+#footer{
+    background: #d34836;
+}
+
+.dbutton{
+    background: #12656788;
+}
+
+.dselected{
+    background: #126567ff;
+}

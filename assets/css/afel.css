@@ -1,0 +1,270 @@
+
+#chart-page{
+    display: none;
+}
+
+#header{
+    background: red;
+    width: 100%;
+    margin: 0px;
+    padding: 5px 0px 5px 0px;
+}
+
+#logo{
+    margin: 0px;
+    width: 80%;
+    margin-top: auto;
+    margin-left: 10%;
+}
+
+.tbutton {
+    min-width: 30%;
+    text-align:center;
+    vertical-align: middle;
+    padding: 5px 10px 5px 10px;
+    margin-right: 10px;
+    background: #aae;
+    color: #444;
+    float: left;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+.tselected {
+    background: #448;
+    color: #eee;
+}
+
+.dbutton {
+    min-width: 30%;
+    text-align:center;
+    vertical-align: middle;
+    padding: 5px 10px 5px 10px;
+    margin-right: 10px;
+    background: #aea;
+    color: #444;
+    float: left;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+.gbutton {
+    min-width: 45%;
+    text-align:center;
+    vertical-align: middle;
+    padding: 5px 10px 5px 10px;
+    margin-right: 10px;
+    background: #aea;
+    color: #444;
+    float: left;
+    margin-top: 10px;
+    border-radius: 5px;
+    font-size: 110%;
+}
+
+.gobutton {
+    width: 80%;
+    text-align:center;
+    vertical-align: middle;
+    padding: 15px 15px 15px 15px;
+    margin-right: 10%;
+    margin-left: 10%;
+    margin-top: 20px;
+    background: #aea;
+    color: #444;
+    float: left;
+    margin-top: 20px;
+    border-radius: 5px;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+.dselected {
+    background: #484;
+    color: #eee;
+}
+
+#backbut{
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background: #aaa;
+    color: #444;
+}
+
+#plusbut{
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    background: #484;
+    color: #fff;
+    font-weight: bold;
+    font-size: 5vh;
+}
+
+.roundbut{
+    width: 8vh;
+    height: 8vh;
+    border-radius: 4vh;
+    text-align: center;
+    vertical-align: middle;
+}
+
+#actions{
+    padding: 10px 10px 20px 10px;
+    position: fixed;
+    bottom: 12vh;
+    left: 0px;
+    width: 100%;
+    background: #eee;
+    display: none;
+}
+
+#timecontrol{
+    display: block;
+    margin-top: 10px;
+    margin-right: 5px;
+    margin-left: 5px;
+    overflow: hidden;
+}
+
+
+#charttimecontrol{
+    display: block;
+    margin-top: 0px;
+    margin-right: 5px;
+    margin-left: 5px;
+    overflow: hidden;
+}
+
+.displaycontrol{
+    display: block;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-left: 5px;
+    overflow: hidden;
+}
+
+
+.clear{
+    display: block;
+}
+
+.highcharts-title{
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+#polarchart{
+    width: 100%;
+    min-height: 20%;
+    background: red;       
+}
+
+.highcharts-legend{
+    display: none;
+}
+
+.highcharts-credits{
+    display: none;
+}
+
+#timechart{
+    height: 250px;    
+}
+
+#hourchart{
+    height: 250px;    
+}
+
+.besttime{
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 100%;
+    overflow: auto;
+}
+
+.besttimel{
+    float: left;
+    width: 60%;
+    font-weight: bold;
+}
+
+.besttimev{
+    float: right;
+    width: 39%;
+    text-align: right;
+}
+
+#recarea{
+    min-height: 100px;
+    margin-top: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 100%;
+    overflow: auto;
+    margin-bottom: 20px;
+}
+
+.recresult{
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    font-size: 120%;
+    background: #eee;
+    border-radius: 10px;
+}
+
+#footer{
+    height: 100px;
+    text-align: center;
+    padding-top: 20px;
+    width: 100%;
+    background: red;
+}
+
+#footer a{
+    color: white;
+}
+
+#goalpage{
+    display: none;
+    width: 100%;
+    padding: 10px 10px 10px 10px;
+}
+
+#newgoalcontrol{
+    overflow: auto;
+}
+
+#ngtiming{
+    overflow: auto;
+}
+
+#gtip{
+    background: #eee;
+    padding: 10px 10px 10px 10px;
+    border-radius: 10px;
+    margin-top: 20px;
+    justification: justify;
+    text-align: justify;
+}
+
+#actarea{
+    display: block;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-left: 5px;
+    overflow: hidden;
+}
+
+#actsbuttons{
+    display: block;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-left: 5px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
