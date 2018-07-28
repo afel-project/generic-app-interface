@@ -158,16 +158,15 @@ echo "</script>"; */
 		var stringArray = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','!','?'];
 		<?php
 // CONFIG: change here
-$apibase = "http://data.afel-project.eu/api/bh/2.0/";
+$apibase = "http://localhost:8004/";
 // CONFIG
-// $data = file_get_contents($apibase."?user=1a1e9b204dd8cacb2e2c4b1a38c34793", false, $context);
-$data = '{username: "'.$_SESSION["afeluserid"].'"}';
+$data = file_get_contents($apibase."?user=".$_SESSION['afeluserid'], false, $context);
+// $data = '{username: "'.$_SESSION["afeluserid"].'"}';
 echo 'var data = '.$data.";\n";
 	 ?>;
 
 function click(e)
 {
-
     currentlyshowing = e.name;
     showChartPage();
 

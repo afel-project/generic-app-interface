@@ -1,4 +1,10 @@
-
+// TODO:
+//   back button...
+//   worldcloud of scopes...
+//   last 100 activities....
+//   button to dashboard and data download...
+//   manipulate scopes...
+//   add dates aggregated as an array day hour...
 var currentdisplay = "mix";
 
 $( document ).ready(function() {
@@ -30,8 +36,10 @@ $( document ).ready(function() {
 	switchCurrentDisplay("mix");
     });
     $("#intbut").click(function(){
-	showIntensity();
+	var a = getDataArray(data, 'intensity');
+	showScopeCloud(a, 'scopecloud', 'Learning scopes by intensity')
 	switchCurrentDisplay("int");
+	console.log(a)
     });
     $("#covbut").click(function(){
 	var a = getDataArray(data, 'coverage');
@@ -110,7 +118,7 @@ function showMixed(){
     var a1 = getDataArray(data, 'coverage');
     var a2 = getDataArray(data, 'diversity');
     var a3 = getDataArray(data, 'complexity');
-    var a4 = getScopeCountsArray(data);
+    var a4 = getDataArray(data, 'intensity');
     var a = [];
     for (var i in a1){
 	a.push({"name": a1[i].name, "weight":
@@ -119,12 +127,6 @@ function showMixed(){
     console.log(a);
     showScopeCloud(a,'scopecloud', "Learning scope by mix of indicators");
 }
-
-function showIntensity(){
-    var a = getScopeCountsArray(data);
-    showScopeCloud(a,'scopecloud', "Learning scopes by intensity");
-}
-
 
 function getScopeCountsArray(data){
     var map = data.reduce(function(map, item) {
@@ -154,34 +156,12 @@ function getScopeCountsArray(data){
     return res;
 }
 
-// TODO: Make this better
 function getDataArray(data, field){
-    var map = data.reduce(function(map, item) {
-	var name = item.scope
-	var topic = +item[field]
-	map[name] = (map[name] || 0) + topic
-	return map
-    }, {})
-    
-    var scope_topic_array = Object.keys(map).map(function(name) {
-	return {
-	    name: name,
-	    score: map[name]
-	}
-    })
-    
-    //console.log(scope_topic_array)
-    var maxtopicweight = getMax(scope_topic_array, "score");
-    var mintopicweight = getMin(scope_topic_array, "score");
-    //console.log(maxtopicweight.score);
-    //console.log(mintopicweight.score);
-    
-    scope_topic_array.forEach(function(a) {
-	var t= normalize(a.score,mintopicweight.score,maxtopicweight.score);
-	a.weight=t;
-    });
-    console.log(scope_topic_array);
-    return scope_topic_array;
+    var res = []
+    for(var sc in data.scopes){
+	res.push({"name": data.scopes[sc].name, "weight": data.scopes[sc][field]})
+    }
+    return res
 }
 
 
@@ -673,12 +653,12 @@ function showActivities(){
     $("#actarea").html(st);
 }
 
-// TODO: show data shared with you.
 function showPolar(){
     var a1 = getDataArray(data, 'coverage');
     var a2 = getDataArray(data, 'diversity');
     var a3 = getDataArray(data, 'complexity');    
-    var a4 = getScopeCountsArray(data);
+    var a4 = getDataArray(data, 'intensity');    
+    console.log("currentlyshowing=")
     console.log(currentlyshowing);
     var polardata = [
 	getWeight(a1, currentlyshowing),
