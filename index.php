@@ -41,9 +41,9 @@ include("custom/custom.php");
     <script> var recos; </script>
 <?php
 			// If session is not set and token has no value then redirect to Login Page
-      if(!isset($_SESSION['username']) && !isset($_GET['token']) )
+session_start(); 
+if(!isset($_SESSION['afeluserid']))
        {
-           // TODO custom login page
            header("Location:login.php");
        }
 
@@ -156,79 +156,13 @@ echo "</script>"; */
 
 		// list containing characters for the random string
 		var stringArray = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','!','?'];
-		var guest =
 		<?php
-		if(isset($_GET['token']))
-		{
-			echo 1;
-		}
-		else {
-			echo 0;
-		}
-		?>;
-		console.log(guest);
-		        if(guest === 1) {
-		            $("#plusbut").hide();
-		        }
-
-		var data =
-		 <?php
-		 if(isset($_GET['token']))
-		 {
-
-	 echo $_SESSION['scopeData'];
-		 }
-		 else {
-
-/**
-* For quick access of data from file.
-*/
-	/*$rows = array_map('str_getcsv', file('myfile.csv'));
-	 $header = array_shift($rows);
-	 $csv = array();
-	 foreach ($rows as $row) {
-	   $csv[] = array_combine($header, $row);
-}
-  $_SESSION['csv']=$csv;
- //Finally, encode our array into a JSON string format so that we can print it out.
- echo json_encode($csv);
-}*/
-
-             // TODO That's what we need to change...
-             // The API can only be called from localhost
-             // (except the CSV API)
-             // need a way to get ID from credentials
-             // implement own login page
-     $username=$_SESSION['username'];
-	 $password=$_SESSION['password'];
-	 $context = stream_context_create(array (
-			 'http' => array (
-					 'header' => 'Authorization: Basic ' . base64_encode("$username:$password")
-			 )
-	 ));
-     // CONFIG: change here
-     $apibase = "https://.....";
-     // CONFIG
-	 $data = file_get_contents($apibase."/?user=1a1e9b204dd8cacb2e2c4b1a38c34793", false, $context);
-if (!empty($data))
-{
-	 $lines = explode("\n", $data);
-	 $head = str_getcsv(array_shift($lines));
-	 $csv = array();
-	 foreach ($lines as $line) {
-		 $csv[] = array_combine($head, str_getcsv($line));
-	 }
-	 $_SESSION['csv']=$csv;
-     $fcsv = array();
-     foreach($csv as $line){
-         if (strcmp($line["scope"], "_scope_of_routine_activities_")!==0){
-             $fcsv[] = $line;
-         }
-     }
-	 echo json_encode($fcsv);
- }
-}
-
+// CONFIG: change here
+$apibase = "http://data.afel-project.eu/api/bh/2.0/";
+// CONFIG
+// $data = file_get_contents($apibase."?user=1a1e9b204dd8cacb2e2c4b1a38c34793", false, $context);
+$data = '{username: "'.$_SESSION["afeluserid"].'"}';
+echo 'var data = '.$data.";\n";
 	 ?>;
 
 function click(e)
