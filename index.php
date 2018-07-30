@@ -33,9 +33,16 @@ include("custom/custom.php");
 
     <script src="assets/js/afel.js"></script>
     <script src="custom/custom.js"></script>
-				<style>
-				.jssocials-share-link { border-radius: 50%; }
-				</style>
+    <style>
+    .toolbutton{
+  color: #fff;
+  border: 1px #fff solid;
+  border-radius: 5px;
+  padding: 5px 5px 5px 5px;
+  margin-right: 10px;
+  float: right;
+    }
+    </style>
 </head>
 	<body>
     <script> var recos; </script>
@@ -65,6 +72,8 @@ echo "</script>"; */
 
 <div id='header'>
     <img id='logo' src="custom/top_banner.png" alt="" />
+    <a href="../download/" class="toolbutton">download</a>
+    <a href="../dashboard/" class="toolbutton">dashboard</a>
 </div>
 
 <!-- common -->
@@ -91,6 +100,7 @@ echo "</script>"; */
 
 <div id="chart-page">
     <div id="polarchart"> </div>
+    <div id="cloudforscope"> </div>
     <div id="timearea">
     <div id="timechart"> </div>
     <div id="besttimespanel"> </div>

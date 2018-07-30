@@ -207,8 +207,9 @@ function showChartPage(){
     // include change the url so that we can go back...
     if (config.show_rec) showRecommendations();
     showPolar();
-    showTimes();
-    if (config.show_act) showActivities();
+    showCloudForScope();
+    // showTimes();
+    // if (config.show_act) showActivities();
     $('#front-page').css('display','none');
     $('#goalpage').css('display','none');
     $('#chart-page').css('display','block');
@@ -651,6 +652,57 @@ function showActivities(){
     }
     st += '</div>';
     $("#actarea").html(st);
+}
+
+function showCloudForScope(){
+    tags = getTags();
+    console.log(tags)
+    var res = []
+    for(var t in tags){
+	res.push({"name": tags[t].name, "weight": tags[t].tfid})
+    }
+    Highcharts.chart("cloudforscope", {
+chart: {
+        borderColor: '#ffffff',
+        borderWidth: 2,
+        type: 'line'
+},
+  credits: {
+        enabled: false
+    },
+    series: [{
+        type: 'wordcloud',
+        data: res
+    }],
+    title: {
+      text: "topics in this learning scope",
+//            style: {"fontSize": "14px"},
+//            verticalAlign: 'bottom'
+    },
+  plotOptions: {
+        series: {
+            cursor: 'pointer',
+            point: {
+                events: {
+                    click: function () {
+//click(this);
+                        
+                    }
+                }
+            }
+        }
+    },
+});
+
+}
+
+function getTags(){
+    for(var i in data.scopes){
+	if (data.scopes[i].name == currentlyshowing){
+	    return data.scopes[i].tags
+	}
+    }
+    return []
 }
 
 function showPolar(){
