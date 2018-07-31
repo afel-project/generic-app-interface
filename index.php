@@ -102,13 +102,13 @@ echo "</script>"; */
     <div id="polarchart"> </div>
     <div id="cloudforscope"> </div>
     <div id="timearea">
-    <div id="timechart"> </div>
+<!--    <div id="timechart"> </div> -->
     <div id="besttimespanel"> </div>
     </div>
-    <div id="recarea">
+<!--    <div id="recarea">
         <div id="recresults">
         </div>
-    </div>
+    </div> -->
     <div id="actarea">
     </div>
     <div id="footer">
@@ -164,8 +164,6 @@ echo "</script>"; */
 		var shareURL=null;
 		var stringLength = 15;
 
-		// list containing characters for the random string
-		var stringArray = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','!','?'];
 		<?php
 // CONFIG: change here
 $apibase = "http://localhost:8004/";
@@ -173,7 +171,9 @@ $apibase = "http://localhost:8004/";
 $data = file_get_contents($apibase."?user=".$_SESSION['afeluserid'], false, $context);
 // $data = '{username: "'.$_SESSION["afeluserid"].'"}';
 echo 'var data = '.$data.";\n";
-	 ?>;
+
+
+?>;
 
 function click(e)
 {
@@ -203,106 +203,6 @@ function getObjects(obj, key, val) {
     return objects;
 }
 
-	function showAndroidToast(toastmsg) {
-
-        Android.showToast(toastmsg);
-
-    }
-
- function showAndroidDialog(dialogmsg) {
-
-        Android.showDialog(dialogmsg);
-
-    }
-
- function moveToScreenTwo() {
-
-        Android.moveToNextScreen();
-
-    }
-		function displayNotification() {
-
-	         Android.displayNotification();
-	     }
-			 $('#toggle_event_editing button').click(function(){
-			 	if($(this).hasClass('locked_active') || $(this).hasClass('unlocked_inactive')){
-			 		/* code to do when unlocking */
-					/* check if user login from Android or Web App*/
-					var ua = navigator.userAgent.toLowerCase();
-					var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
-					if(isAndroid) {
-  // Do something!
-  // Redirect to Android-function
-	Android.displayNotification();
-	$('#switch_status').html('Notification Switched on.');
-
-				 	/* reverse locking status */
-				 	$('#toggle_event_editing button').eq(0).toggleClass('locked_inactive locked_active btn-default btn-info');
-				 	$('#toggle_event_editing button').eq(1).toggleClass('unlocked_inactive unlocked_active btn-info btn-default');
-											}
-											else {
-												alert("Notifications are only available on Android");
-											}
-
-		}
-		else{
-
-			/* code to do when locking */
-	        $('#switch_status').html('Notification Switched off.');
-
-								 	/* reverse locking status */
-								 	$('#toggle_event_editing button').eq(0).toggleClass('locked_inactive locked_active btn-default btn-info');
-								 	$('#toggle_event_editing button').eq(1).toggleClass('unlocked_inactive unlocked_active btn-info btn-default');
-	Android.stopNotification();
-		}
-
-			 });
-function share()
-{
-	var ua = navigator.userAgent.toLowerCase();
-	var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
-	if(isAndroid) {
-
-		var rndString = "";
-
-		// build a string with random characters
-		for (var i = 1; i < stringLength; i++) {
-			var rndNum = Math.ceil(Math.random() * stringArray.length) - 1;
-			rndString = rndString + stringArray[rndNum];
-		}
-
-		rndString=rndString;
-		shareJson=JSON.stringify(getObjects(data,'scope',currentlyshowing));
-
-$.ajax({
-									 type: "POST",
-									 url: 'shareServer.php',
-								data: {
-												"scope":currentlyshowing,
-								 				"tokenNo": rndString,
-												"scopeData": shareJson
-											},
-									 success: function(data)
-									 {
-										 console.log(data);
-									 }
-							 });
-////jsSocials not working in Android//////
-			/*				 $("#share").jsSocials({
-								 url: "Hello, Someone has shared Didactalia contents with you.\nVisit "+" http://url.to.share " +"and submit you token id:  "+rndString+"  to display share contents.\n Remember it is valid till tomorrow." ,
-	 text: "Didactalia Share Content",
-							     showLabel: false,
-							     showCount: false,
-							     shares: ["email"]
-							 });*/
-
-	Android.shareData(rndString);
-}
-else {
-	alert("Share only available on Android");
-}
-
-}
 </script>
 
 	</body>

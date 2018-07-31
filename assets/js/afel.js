@@ -209,7 +209,7 @@ function showChartPage(){
     showPolar();
     showCloudForScope();
     // showTimes();
-    // if (config.show_act) showActivities();
+    if (config.show_act) showActivities();
     $('#front-page').css('display','none');
     $('#goalpage').css('display','none');
     $('#chart-page').css('display','block');
@@ -616,42 +616,39 @@ function showRecommendations(){
 }
 
 function showActivities(){
-    var st = '<h3>Top 10 activities...</h3><div id="actsbuttons">'
-	+'<div class="dbutton dselected" id="actmixedbut">by mixed indicators</div>'
-    	+'<div class="dbutton" id="actintbut">by intensity</div>'
-        +'<div class="dbutton" id="actcovbut">by coverage</div>'
-        +'<div class="dbutton" id="actdivbut">by diversity</div>'
-        +'<div class="dbutton" id="actcombut">by complexity</div>'
-	+'</div>';
-    var covs = [];
-    var byCovs = {};
-    for (var i in data){
-	if (data[i]["scope"] == currentlyshowing){
-	    var d = data[i];
-	    console.log(d.title);
-	    if (!covs.includes(d.coverage)) covs.push(d.coverage);
-	    if (byCovs[d.coverage])
-		byCovs[d.coverage].push(d);
-	    else
-		byCovs[d.coverage] = [d];
-	}
+    scope = -1
+    for (var s in data["scopes"]){
+	if (data["scopes"][s].name == currentlyshowing)
+	    scope = s
     }
-    st += '<div id="actsbycovs">';
-    var count = 0;
-    for (var i in covs){
-	for (var d in byCovs[covs[i]]){
-	    var dd = byCovs[covs[i]][d];
-	    if (dd.title && dd.title!= "")
-		st += '<div class="recresult"><a href="'+dd.resource+'">'+dd.title+'</a></div>';
-	    else
-		st += '<div class="recresult"><a href="'+dd.resource+'">no title</a></div>';
-	    count ++;
-	    if (count == 10) break;
-	}
-	if (count == 10) break;
+    if (scope != -1){
+	$.ajax({
+	    url: "activities.php?scope="+scope,
+	    dataType: "json",
+	    success: function(result){
+		console.log(result)
+		var found = false;
+		var st = "";
+		for (var i in result){
+		    if (result[i].url){
+			found = true;
+			if (result[i].title && result[i].title!="")
+			    st+='<div class="activityitem"><a href="'+result[i].url+'" target="_blank">'+result[i].title+'</div>'
+			else
+			    st+='<div class="activityitem"><a href="'+result[i].url+'" target="_blank">'+reduceURL(result[i].url)+'</div>'
+		    }
+		}
+		if (found = true) st = '<h3>Latest activities in the scope</h3><div id="activitylist">'+st+'</div>'		
+		$("#actarea").html(st)
+	    }
+	})
+    } else {
+	console.log("didn't find the scope "+currentlyshowing);
     }
-    st += '</div>';
-    $("#actarea").html(st);
+}
+
+function reduceURL(u){
+    return u
 }
 
 function showCloudForScope(){
