@@ -114,7 +114,7 @@ echo "</script>"; */
     <div id="footer">
       <a href="http://afel-project.eu">Developed by the AFEL project</a>
     </div>
-    <div id="backbut" class="tbutton">Back</div>
+<!--    <div id="backbut" class="tbutton">Back</div> -->
 <?php if ($app_custom_conf["show_actions"]===true){ ?>
     <div id="plusbut" class="roundbut">+</div>
     <div id="actions">
@@ -163,8 +163,9 @@ echo "</script>"; */
 		var shareData=null;
 		var shareURL=null;
 		var stringLength = 15;
+        window.location.hash = ""
 
-		<?php
+     <?php
 // CONFIG: change here
 $apibase = "http://localhost:8004/";
 // CONFIG
@@ -178,6 +179,7 @@ echo 'var data = '.$data.";\n";
 function click(e)
 {
     currentlyshowing = e.name;
+    window.location.hash = e.name;
     showChartPage();
 
 	//////For Sharing--> grabbing objects that match some currentlyshowing scope in data////////

@@ -22,6 +22,11 @@ $( document ).ready(function() {
     $("#backbut").click(function(){
 	showFrontPage();
     });
+    window.onhashchange = function(){
+	if (window.location.hash == ""){
+	    showFrontPage();
+	}
+    };
     $("#lmbut").click(function(){
 	alert("not yet implemented");	
     });
@@ -616,6 +621,7 @@ function showRecommendations(){
 }
 
 function showActivities(){
+    $("#actarea").html("")
     scope = -1
     for (var s in data["scopes"]){
 	if (data["scopes"][s].name == currentlyshowing)
