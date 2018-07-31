@@ -163,8 +163,15 @@ function getScopeCountsArray(data){
 
 function getDataArray(data, field){
     var res = []
+    var names = []
     for(var sc in data.scopes){
-	res.push({"name": data.scopes[sc].name, "weight": data.scopes[sc][field]})
+	name = data.scopes[sc].name
+	if (names.includes(name)) {
+	    name = name+"*"
+	    data.scopes[sc].name = name
+	}
+	res.push({"name": name, "weight": data.scopes[sc][field]})
+	names.push (name)
     }
     return res
 }
@@ -777,9 +784,12 @@ function showPolar(){
 }
 
 function getWeight(a, s){
+    var sum = 0
+    var count = 0
     for (var i in a){
-	if (a[i].name == s) return a[i].weight;
+	if (a[i].name == s) return a[i].weight
     }
+    return 0.0
 }
 
 
