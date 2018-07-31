@@ -122,7 +122,7 @@ function showMixed(){
     var a = [];
     for (var i in a1){
 	a.push({"name": a1[i].name, "weight":
-		(a1[i].weight+a1[i].weight+a1[i].weight+a4[i].weight)/4});
+		(a1[i].weight+a2[i].weight+a3[i].weight+a4[i].weight)/4});
     }
     console.log(a);
     showScopeCloud(a,'scopecloud', "Learning scope by mix of indicators");
