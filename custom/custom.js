@@ -1,6 +1,6 @@
 
 
 var config = {
-    show_rec: false,
+    show_rec: true,
     show_act: true
 }

@@ -8,6 +8,10 @@ body {
 
 #header{
     background: #3b5998;
+    height: 50px;
+    width: 100%;
+    margin: 0px;
+    padding: 5px 0px 5px 0px;
 }
 
 #footer{

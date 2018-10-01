@@ -1,29 +1,50 @@
 // TODO:
-//   back button...
-//   worldcloud of scopes...
-//   last 100 activities....
-//   button to dashboard and data download...
-//   manipulate scopes...
+//   manipulate scopes - move - delete the whole scope
 //   add dates aggregated as an array day hour...
+//   please waite dialog on merge and delete
+//   log
+//   update
 var currentdisplay = "mix";
 
 $( document ).ready(function() {
     showMixed();
-    $("#nggobut").click(function(){
-	showChartPage();
+    $('#mergesearch').on('input',function(e){
+	afelLog("search for merging", currentlyshowing, "searched for merging "+$('#mergesearch').val());
+	mergesearch($('#mergesearch').val());
     });
+    $('#movesearch').on('input',function(e){
+	afelLog("search for moving", currentlyshowing, "searched for moving "+$('#movesearch').val());
+	movesearch($('#movesearch').val());
+    });
+    $("#nggobut").click(function(){
+	afelLog("create new goal", currentlyshowing, "created new goal "+currentlyshowing);
+	showChartPage();
+    });    
+    $("#mergebutton").click(function(){
+	showMergeDialog();
+    });
+     $("#movecancel").click(function(){
+	 hideMoveDialog();
+    });    
     $("#plusbut").click(function(){
 	toggleActions();
     });
     $("#goalaction").click(function(){
-	toggleActions();
+//	toggleActions();
 	showGoalPage();
     });
+    $("#deleteaction").click(function(){
+//	toggleActions();
+	afelLog("delete scope", currentlyshowing, "deleted scope "+currentlyshowing);
+	deleteScope();
+    });
     $("#backbut").click(function(){
+	afelLog("back to front page", currentlyshowing, "went back to frontpage "+currentlyshowing);
 	showFrontPage();
     });
     window.onhashchange = function(){
 	if (window.location.hash == ""){
+	    afelLog("reload front page", currentlyshowing, "reloaded frontpage "+currentlyshowing);
 	    showFrontPage();
 	}
     };
@@ -37,26 +58,31 @@ $( document ).ready(function() {
 	alert("not yet implemented");	
     });
     $("#mixbut").click(function(){
+	afelLog("changed display", "mixed", "changed display to mixed");
 	showMixed();
 	switchCurrentDisplay("mix");
     });
     $("#intbut").click(function(){
+	afelLog("changed display", "intensity", "changed display to intensity");
 	var a = getDataArray(data, 'intensity');
 	showScopeCloud(a, 'scopecloud', 'Learning scopes by intensity')
 	switchCurrentDisplay("int");
 	console.log(a)
     });
     $("#covbut").click(function(){
+	afelLog("changed display", "coverage", "changed display to coverage");
 	var a = getDataArray(data, 'coverage');
 	showScopeCloud(a, 'scopecloud', 'Learning scopes by topic coverage')
 	switchCurrentDisplay("cov");
     });
     $("#divbut").click(function(){
+	afelLog("changed display", "diversity", "changed display to diversity");
 	var a = getDataArray(data, 'diversity');
 	showScopeCloud(a, 'scopecloud', 'Learning scopes by diversity')	
 	switchCurrentDisplay("div");
     });
     $("#combut").click(function(){
+	afelLog("changed display", "complexity", "changed display to complexity");
 	var a = getDataArray(data, 'complexity');
 	showScopeCloud(a, 'scopecloud', 'Learning scopes by complexity')	
 	switchCurrentDisplay("com");
@@ -217,7 +243,7 @@ click(this);
 
 function showChartPage(){
     // include change the url so that we can go back...
-    if (config.show_rec) showRecommendations();
+    showRecommendations();
     showPolar();
     showCloudForScope();
     // showTimes();
@@ -225,6 +251,176 @@ function showChartPage(){
     $('#front-page').css('display','none');
     $('#goalpage').css('display','none');
     $('#chart-page').css('display','block');
+    $('#mergebutton').css('display','block');
+    $('#deleteaction').css('display','block');
+}
+
+function hideMergeDialog(){
+    $("#mergedialog").css("display", "none")
+}
+
+function hideMoveDialog(){
+    $("#movedialog").css("display", "none")
+}
+
+function mergesearch(kw){
+    console.log("search "+kw)
+    var scopes = []
+    for(var s in data["scopes"]){
+	const sc = data["scopes"][s]
+	for(var t in sc.tags){
+	    if (sc.tags[t].name.toLowerCase().indexOf(kw.toLowerCase())!=-1){
+		scopes.push(s)
+		break;
+	    }
+	}
+    }
+    console.log(scopes)
+    scope = -1
+    for (var s in data["scopes"]){
+	if (data["scopes"][s].name == currentlyshowing)
+	    scope = s
+    }
+    var st = ""
+    if (scope!=-1){
+	for (var i in scopes){
+	    if (scopes[i]!=scope){
+		st+='<div class="mergesearchitem"><div class="mergesearchitemtitle">'+
+                    '<a href="javascript:merge('+scope+','+scopes[i]+');">'+
+		    data["scopes"][scopes[i]].tags[0].name+
+		    '</a></div>'+
+		    '<div class="mergetaglist">'
+		var first = true
+		for(var t in data["scopes"][scopes[i]].tags){
+		    if (!first){
+			st+=data["scopes"][scopes[i]].tags[t].name+" "
+		    }
+		    first = false
+		}
+		st +='</div></div>'
+	    }
+	}
+    } else {
+	console.log("didn't find the scope "+currentlyshowing);
+    }
+    $("#mergecloud").html(st)
+}
+
+function movesearch(kw){
+    console.log("search "+kw)
+    var scopes = []
+    for(var s in data["scopes"]){
+	const sc = data["scopes"][s]
+	for(var t in sc.tags){
+	    if (sc.tags[t].name.toLowerCase().indexOf(kw.toLowerCase())!=-1){
+		scopes.push(s)
+		break;
+	    }
+	}
+    }
+    console.log(scopes)
+    scope = -1
+    for (var s in data["scopes"]){
+	if (data["scopes"][s].name == currentlyshowing)
+	    scope = s
+    }
+    var st = ""
+    if (scope!=-1){
+	for (var i in scopes){
+	    if (scopes[i]!=scope){
+		st+='<div class="movesearchitem"><div class="movesearchitemtitle">'+
+                    '<a href="javascript:move(\''+tomoveact+'\','+scope+','+scopes[i]+', '+tomoveacti+');">'+
+		    data["scopes"][scopes[i]].tags[0].name+
+		    '</a></div>'+
+		    '<div class="movetaglist">'
+		var first = true
+		for(var t in data["scopes"][scopes[i]].tags){
+		    if (!first){
+			st+=data["scopes"][scopes[i]].tags[t].name+" "
+		    }
+		    first = false
+		}
+		st +='</div></div>'
+	    }
+	}
+    } else {
+	console.log("didn't find the scope "+currentlyshowing);
+    }
+    $("#movecloud").html(st)
+}
+
+function showMergeDialog(){
+    $("#mergescname").html(currentlyshowing)
+    $("#mergecloud").html("Find a learning scope to merge with")
+    $("#mergesearch").val("")
+	/* 
+	$.ajax({
+	    url: "merge.php?scope="+scope,
+	    dataType: "json",
+	    success: function(result){
+		var st = ""
+		for (var i in result){
+		    st+=
+			'<a style="font-size: 1'+parseInt(result[i].sim*120)+'%" href="javascript:merge('+scope+', '+result[i].cluster+');"><br/>'+
+		    result[i].tags.tags[0].name+
+			"</a>";		    
+		}
+		st += "</ul>";
+		$("#mergecloud").html(st)
+	    }
+	}) */
+    $("#mergedialog").css("display", "block")
+}
+
+function showMoveDialog(){
+    $("#movecloud").html("Find a learning scope to move to...")
+    $("#movesearch").val("")
+	/* 
+	$.ajax({
+	    url: "merge.php?scope="+scope,
+	    dataType: "json",
+	    success: function(result){
+		var st = ""
+		for (var i in result){
+		    st+=
+			'<a style="font-size: 1'+parseInt(result[i].sim*120)+'%" href="javascript:merge('+scope+', '+result[i].cluster+');"><br/>'+
+		    result[i].tags.tags[0].name+
+			"</a>";		    
+		}
+		st += "</ul>";
+		$("#mergecloud").html(st)
+	    }
+	}) */
+    $("#movedialog").css("display", "block")
+}
+
+
+// TODO should ask for confirmation... no time...
+function merge(sc1, sc2){
+    afelLog("merge", currentlyshowing, "merging "+sc1+" "+sc2);
+    $.ajax({
+	    url: "merge.php?scope1="+sc1+"&scope2="+sc2,
+	    dataType: "json",
+	    success: function(result){
+		console.log(result);
+		$("#mergecloud").html("Reloading, please wait...")		
+		location.reload();
+	    }
+	});
+}
+
+function move(act, sc1, sc2, i){
+    afelLog("move", currentlyshowing, "moving "+sc1+" "+sc2+" act");
+    $('#act_'+i).css("display", "none");
+    $("#movecloud").html("Moving, please wait...")
+    $.ajax({
+	    url: "move.php?act="+act+"&scope1="+sc1+"&scope2="+sc2,
+	    dataType: "json",
+	    success: function(result){
+		console.log(result)
+		hideMoveDialog()
+	    }
+	});
 }
 
 function showTimes(){
@@ -588,43 +784,82 @@ function showHours(){
     });
 }
 
-function showRecommendations(){
-    // initial list
-    if (recos){
-	var st = "<h3>Recommendations</h3>";
-	for (var i in recos.recoIds){
-	    st += '<div class="recresult">'+
-		recos.recoIds[i]+
-		'</div>';	
-	}	
-	$('#recresults').html(st);
+function showRecommendations(){    
+    var scope = -1;
+    for (var s in data["scopes"]){
+	if (data["scopes"][s].name == currentlyshowing)
+	    scope = s
     }
-    var rids = [];
-    if (recos) rids = recos.recoIds;
-    else rids = ["908947e9-58d6-4cba-a532-f8cca57cc746","248250f3-4c5a-4cbe-9e66-20b4aa9c4e66","bb99df57-1a16-4257-b05a-9d9a83e5c5e8","609a22f2-7cc6-429c-a071-079622f05773","1eae742b-7ad3-4ee3-aabf-03ec0c0e413e","810d093c-f4db-4720-bab7-9404d212ea00","edfc37db-eca2-4cee-a484-21f8e3c81a2a","39d99e7e-ced0-4126-9577-275337f8348b","31d7882a-1ff8-4c6d-97a3-f5729fcef033","d2e29ce0-9d26-4c94-b566-92f1ae671b1a"];
-    var url = "recodetails.php?l="+JSON.stringify(rids);
+    var ascope = []
+    for (var t in data["scopes"][scope]["tags"])
+	ascope.push(data["scopes"][scope]["tags"][t].name)
+    console.log("ascope")
+    console.log(ascope)
+    $.post("reco.php", {scope: ascope}, function( d ) {
+	console.log(d);
+	const ddata = JSON.parse(d);
+	console.log(ddata);
+	var st = "";
+	for (var i in ddata.recomms){
+	    if (ddata.recomms[i].indexOf("open.edu")!=-1){
+		st += '<div class="recresult">'+
+		    '<a onclick="javascript:afelLog(\'recocheck\', \''+currentlyshowing+'\', \'clicked on resource '+ddata.recomms[i]+'\');" target="_blank" href="'+ddata.recomms[i]+'">'+
+		    openEdURLtoTitle(ddata.recomms[i])+
+		    '</a></div>';
+	    }
+	}
+	$('#recresults').html(st);
+    });
+    //});
+    return ;
+}
+
+function openEdURLtoTitle(u){
+    const nu = u.replace(/\/content-section-.*/, '')
+    return nu.substring(nu.lastIndexOf('/')+1).replace(/-/g, ' ')
+}
+
+
+function deleteActivity(id, i){
+    afelLog("delete activity", currentlyshowing, "deleting "+id);
+    $('#act_'+i).css("display", "none");
+    $.ajax({
+	url: "delete.php?act="+id,
+	dataType: "json",
+	success: function(result){
+	    console.log("done deleting")
+	    console.log(result);
+	}
+    });
+}
+
+function deleteScope(){
+    var scope = -1;
+    for (var s in data["scopes"]){
+	if (data["scopes"][s].name == currentlyshowing)
+	    scope = s
+    }
+    if (scope != -1){
 	$.ajax({
-	    url: url,
+	    url: "delete_s.php?scope="+scope,
 	    dataType: "json",
 	    success: function(result){
+		console.log("done deleting")
 		console.log(result);
-		var st = "";		
-		var title = "";
-		var link = "";
-		for (var i in rids){		    
-		    for (var j in result.hits.hits){
-			var doc = result.hits.hits[j];
-			if (doc._id == rids[i]){
-			    title = doc._source.title;
-			    link = doc._source.resource_url;
-			}
-		    }
-		    st += '<div class="recresult">'+
-			'<a href="'+link+'">'+title+'</a>'+
-			'</div>';	
-		}
-		$('#recresults').html(st);
-	    }});
+		console.log("reloading")		
+		location.reload();	
+	    }
+	});	
+    }
+}
+
+var tomoveact = "";
+var tomoveacti = -1;
+
+function moveActivity(id, i){
+    tomoveact = id;
+    tomoveacti = i;
+    showMoveDialog();
 }
 
 function showActivities(){
@@ -646,9 +881,9 @@ function showActivities(){
 		    if (result[i].url){
 			found = true;
 			if (result[i].title && result[i].title!="")
-			    st+='<div class="activityitem"><a href="'+result[i].url+'" target="_blank">'+result[i].title+'</div>'
+			    st+='<div class="activityitem" id="act_'+i+'"><a class="actlink" href="'+result[i].url+'" target="_blank">'+result[i].title+'</a><a class="deletebutton" href="javascript:deleteActivity(\''+result[i].id+'\', '+i+');">delete</a><a class="movebutton" href="javascript:moveActivity(\''+result[i].id+'\', '+i+');">move</a></div>'
 			else
-			    st+='<div class="activityitem"><a href="'+result[i].url+'" target="_blank">'+reduceURL(result[i].url)+'</div>'
+			    st+='<div class="activityitem" id="act_'+i+'"><a class="actlink" href="'+result[i].url+'" target="_blank">'+reduceURL(result[i].url)+'</a><a class="deletebutton" href="javascript:deleteActivity(\''+result[i].id+'\', '+i+');">delete</a><a class="movebutton" href="javascript:moveActivity(\''+result[i].id+'\', '+i+');">move</a></div>'
 		    }
 		}
 		if (found = true) st = '<h3>Latest activities in the scope</h3><div id="activitylist">'+st+'</div>'		
@@ -770,7 +1005,7 @@ function showPolar(){
 		    return "the average complexity of activities of in this scope: <strong>"+parseInt(this.y*100)+"%";
 		}
 		if (this.x == "diversity"){
-		    return "how activities in this scope cover a wide range of views (currently based on estimated age and gender of author): <strong>"+parseInt(this.y*100)+"%";
+		    return "how activities in this scope cover a wide range of views (currently based on variety of sources): <strong>"+parseInt(this.y*100)+"%";
 		}
 	    }
 	},
@@ -792,17 +1027,21 @@ function getWeight(a, s){
     return 0.0
 }
 
-
 function showFrontPage(){
-    currentlyShowing = null;
+    currentlyshowing = null;
     $('#chart-page').css('display','none');
     $('#goalpage').css('display','none');
+    $('#mergebutton').css('display','none');
+    $('#mergedialog').css('display','none');
+    $('#movedialog').css('display','none');        
+    $('#deleteaction').css('display','none');
     $('#front-page').css('display','block');
 }
 
 
 function showGoalPage(){
-    currentlyShowing = null;
+    // currentlyShowing = null;
+    $('#goalscopetitle').html(currentlyshowing);
     $('#chart-page').css('display','none');
     $('#front-page').css('display','none');
     $('#goalpage').css('display','block');
@@ -849,4 +1088,11 @@ function sDay(i){
     if (i==5) return "Saturday";
     if (i==6) return "Sunday";
     return "what?";
+}
+
+function afelLog(type, label, message){
+    $.post( "log.php", {type: type, label: label, message: message}, function( d ) {
+	console.log("Logged");
+	console.log(d);
+    });
 }

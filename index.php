@@ -42,6 +42,15 @@ include("custom/custom.php");
   margin-right: 10px;
   float: right;
     }
+    .toolbuttonright{
+  color: #fff;
+  border: 1px #fff solid;
+  border-radius: 5px;
+  padding: 5px 5px 5px 5px;
+  margin-left: 10px;
+  float: left;
+  display: none;
+    }
     </style>
 </head>
 	<body>
@@ -72,8 +81,10 @@ echo "</script>"; */
 
 <div id='header'>
     <img id='logo' src="custom/top_banner.png" alt="" />
-    <a href="../download/" class="toolbutton">download</a>
-    <a href="../dashboard/" class="toolbutton">dashboard</a>
+    <a href="../download/" style="display:none" class="toolbutton">download</a>
+    <a href="../dashboard/" style="display: none" class="toolbutton">dashboard</a>
+    <a id="mergebutton" class="toolbuttonright">merge</a>
+    <a id="deleteaction" class="toolbuttonright">delete</a> 
 </div>
 
 <!-- common -->
@@ -105,10 +116,12 @@ echo "</script>"; */
 <!--    <div id="timechart"> </div> -->
     <div id="besttimespanel"> </div>
     </div>
-<!--    <div id="recarea">
-        <div id="recresults">
-        </div>
-    </div> -->
+    <div id="recarea">
+    <h3>Recommendations</h3>
+      <div id="recresults">
+       Loading...
+      </div>
+    </div>       
     <div id="actarea">
     </div>
     <div id="footer">
@@ -128,19 +141,20 @@ echo "</script>"; */
 <?php } ?>
                                                          
 <!-- <div class="alert alert-info" id="switch_status">Notification Switched off.</div>
-    </div>
-</div> --> <!-- chart page -->
+    </div> -->
+</div> <!-- chart page -->
+
 
 <div id="goalpage">
-<h3>New Goal in learning scope impressionism</h3>
+<h3>New Goal in learning scope <span id="goalscopetitle"></span></h3>
 <div id="newgoalcontrol">
-    <div class="gbutton dselected" id="workmore">work more</div>
-    <div class="gbutton" id="inccoverage">increase coverage</div>
-    <div class="gbutton" id="inccomplexity">increase complexity</div>
-    <div class="gbutton" id="incdiversity">increase diversity</div>
+    <div class="dbutton dselected" id="workmore">work more</div>
+    <div class="dbutton" id="inccoverage">increase coverage</div>
+    <div class="dbutton" id="inccomplexity">increase complexity</div>
+    <div class="dbutton" id="incdiversity">increase diversity</div>
 </div>
     <div id="gtip">
-    The Didactalia AFEL app monitors your activity on Didactalia. It can remind you to focus on the topic you have choosen and to simply read more, watch more and do more on that topic.
+    The AFEL app monitors your online learning activity. It can remind you to focus on the topic you have choosen and to simply read more, watch more and do more on that topic.
     </div>
     <h4>Timing:</h4>
     <div id="ngtiming">
@@ -151,12 +165,36 @@ echo "</script>"; */
     <div class="gobutton" id="nggobut">go</div>
     </div> <!-- goal-page -->
 
+<div id="viewgoalpage">
+    <div id="viewgoalheader">
+       <h3 id="viewgoaltitle">Goals for scope <span id="viewgoalscope"></span></h3>
+       <div class="dbutton dslected" id="closeviewgoalbut">close</div>
+    </div>
+    <div id="goallist"></div>
+</div>
 
 </div> <!-- main -->
 
+<div id="mergedialog">
+    <h3>Merging scope <span id="mergescname">XXX</span></h3>
+    <input type="text" id="mergesearch" placeholder="keyword" />
+    <div id="mergecloud">
+       Find a learning scope to merge with....
+    </div>
+    <div class="dbutton " id="mergecancel">cancel</div>
+</div>
+
+<div id="movedialog">
+    <h3>Move activity to...</h3>
+    <input type="text" id="movesearch" placeholder="keyword" />
+    <div id="movecloud">
+       Find a learning scope to move to....
+    </div>
+    <div class="dbutton " id="movecancel">cancel</div>
+</div>
+        
  <script src="assets/js/d3.js"></script>
     <script src="assets/js/d3.layout.cloud.js"></script>
-
     <script>
 		var sharJson=null;
 		var currentlyshowing = null;
@@ -178,6 +216,7 @@ echo 'var data = '.$data.";\n";
 
 function click(e)
 {
+    afelLog("view scope", e.name, "clicked on scope "+e.name);
     currentlyshowing = e.name;
     window.location.hash = e.name;
     showChartPage();
