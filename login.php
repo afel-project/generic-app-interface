@@ -50,12 +50,13 @@ if ((isset($_POST["username"]) || isset($_POST["password"])) && ($password == ""
     if (isset($result->error)){
         $error = $result->error;
     } else {
-        if (isset($result->key)){
+        if (isset($result->key) && strcmp($result->key, "")!=0){
             session_start(); 
             $_SESSION["afeluserid"] = $result->key;
             header("Location:index.php");
         } else {
-            $error = "Something went wrong with the authentication. Please contect the administrator of the platform";
+            $error = "Something went wrong with the authentication. Please contact the administrator of the platform.";
+            error_log("User issue in connecting...",0);
         }
     }
 }

@@ -5,6 +5,7 @@
 //   log
 //   update
 var currentdisplay = "mix";
+var goalindicator = "intensity";
 
 $( document ).ready(function() {
     showMixed();
@@ -17,9 +18,14 @@ $( document ).ready(function() {
 	movesearch($('#movesearch').val());
     });
     $("#nggobut").click(function(){
-	afelLog("create new goal", currentlyshowing, "created new goal "+currentlyshowing);
+	afelLog("create new goal", currentlyshowing, "created new goal "+currentlyshowing);	
+	createGoal(currentlyshowing, goalindicator);
 	showChartPage();
-    });    
+    });
+    $("#ngclosebut").click(function(){
+	if (currentlyshowing) showChartPage();
+	else showFrontPage();
+    });
     $("#mergebutton").click(function(){
 	showMergeDialog();
     });
@@ -88,6 +94,7 @@ $( document ).ready(function() {
 	switchCurrentDisplay("com");
     });
     $("#workmore").click(function(){
+	goalindicator = "intensity"
 	$("#workmore").addClass("dselected")
 	$("#inccoverage").removeClass("dselected")
 	$("#inccomplexity").removeClass("dselected")
@@ -95,6 +102,7 @@ $( document ).ready(function() {
 	$("#gtip").html("The Didactalia AFEL app monitors your activity on Didactalia. It can remind you to focus on the topic you have choosen and to simply read more, watch more and do more on that topic.");
     });
     $("#inccoverage").click(function(){
+	goalindicator = "coverage"
 	$("#workmore").removeClass("dselected")
 	$("#inccoverage").addClass("dselected")
 	$("#inccomplexity").removeClass("dselected")
@@ -102,13 +110,15 @@ $( document ).ready(function() {
 	$("#gtip").html("To increase coverage, try to focus on activities that explore different areas of the topic you have selected. A given learning scope can be wide and you can explore it more completely by choosing resources that are wide themselves, or by carrying out a number of specialised and varied activities.");	
     });
     $("#inccomplexity").click(function(){
+	goalindicator = "complexity"
 	$("#workmore").removeClass("dselected")
 	$("#inccoverage").removeClass("dselected")
 	$("#inccomplexity").addClass("dselected")
 	$("#incdiversity").removeClass("dselected")
 	$("#gtip").html("As you become more familiar with a topic, you can expect to be able to tackle more and more complex activities. They migh seem more difficult, but they also help you go deeper and become more specialised in the topic you have choosen.");
     });
-        $("#incdiversity").click(function(){
+    $("#incdiversity").click(function(){
+	goalindicator = "diversity"
 	$("#workmore").removeClass("dselected")
 	$("#inccoverage").removeClass("dselected")
 	$("#inccomplexity").removeClass("dselected")
@@ -399,14 +409,15 @@ function showMoveDialog(){
 function merge(sc1, sc2){
     afelLog("merge", currentlyshowing, "merging "+sc1+" "+sc2);
     $.ajax({
-	    url: "merge.php?scope1="+sc1+"&scope2="+sc2,
-	    dataType: "json",
-	    success: function(result){
-		console.log(result);
-		$("#mergecloud").html("Reloading, please wait...")		
-		location.reload();
-	    }
-	});
+	url: "merge.php?scope1="+sc1+"&scope2="+sc2,
+	dataType: "json",
+	success: function(result){
+	    console.log(result);
+	    $("#mergecloud").html("Reloading, please wait...")		
+	    location.reload();
+	}
+    }); 
+    console.log("merging "+sc1+" "+sc2);
 }
 
 function move(act, sc1, sc2, i){
@@ -784,6 +795,13 @@ function showHours(){
     });
 }
 
+function recoClicked(rid, r){
+    afelLog('recocheck', currentlyshowing, 'clicked on resource '+r);
+    $.post("recofb.php", {rid: rid, r: r}, function( d ) {
+	console.log(d)
+    });
+}
+
 function showRecommendations(){    
     var scope = -1;
     for (var s in data["scopes"]){
@@ -803,7 +821,7 @@ function showRecommendations(){
 	for (var i in ddata.recomms){
 	    if (ddata.recomms[i].indexOf("open.edu")!=-1){
 		st += '<div class="recresult">'+
-		    '<a onclick="javascript:afelLog(\'recocheck\', \''+currentlyshowing+'\', \'clicked on resource '+ddata.recomms[i]+'\');" target="_blank" href="'+ddata.recomms[i]+'">'+
+		    '<a onclick="javascript:recoClicked(\''+ddata.recommId+'\', \''+ddata.recomms[i]+'\');" target="_blank" href="'+ddata.recomms[i]+'">'+
 		    openEdURLtoTitle(ddata.recomms[i])+
 		    '</a></div>';
 	    }
@@ -955,6 +973,8 @@ function showPolar(){
     var a2 = getDataArray(data, 'diversity');
     var a3 = getDataArray(data, 'complexity');    
     var a4 = getDataArray(data, 'intensity');    
+    console.log(a1)
+    console.log(a4)
     console.log("currentlyshowing=")
     console.log(currentlyshowing);
     var polardata = [
@@ -1039,12 +1059,105 @@ function showFrontPage(){
 }
 
 
+function createGoal(scope, indicator){
+    $.ajax({
+	url: "set_goal.php?scope="+scope+"&indicator="+indicator,
+	dataType: "json",
+	success: function(result){
+	    console.log(result)
+	}
+    });
+}
+
+function deleteGoal(i,s){
+    afelLog("delete goal", currentlyshowing, "deleting goal "+i+" in "+s);
+    $.ajax({
+	url: "delete_goal.php?scope="+s+"&indicator="+i,
+	dataType: "json",
+	success: function(result){
+	    console.log(result)
+	}});
+    if (currentlyshowing) showChartPage();
+    else showFrontPage();
+}
+
+
 function showGoalPage(){
     // currentlyShowing = null;
-    $('#goalscopetitle').html(currentlyshowing);
     $('#chart-page').css('display','none');
     $('#front-page').css('display','none');
     $('#goalpage').css('display','block');
+    if (currentlyshowing){
+	$('#newgoalsection').css('display','block');
+	$('#goalscopetitle').html(currentlyshowing);
+    } else {
+	$('#newgoalsection').css('display','none');
+    }
+    // get the list of goals...
+    $('#existinggoalssection').html("Loading your learning goals...")
+    $.ajax({
+	url: "get_goals.php",
+	dataType: "json",
+	success: function(result){
+	    console.log("Goals::")
+	    console.log(result)
+	    var st = ''
+	    for (var g in result){
+		st += '<div class="goalview">'
+		const goal = result[g]
+		st+='<div class="goallabel">'+goal.indicator+' in '+goal.scope+'<br/> <a href="javascript:deleteGoal(\''+goal.indicator+'\',\''+goal.scope+'\');">(delete)</a></div>'
+		st+='<div class="goalchart" id="goalchart'+g+'"></div>'
+		st+='</div>'		
+	    }
+	    $('#existinggoalssection').html(st)
+	    for(var g in result){
+		const vals = result[g].values;
+		var dvals = {}
+		for (var v in vals){
+		    dvals[Date.parse(v)] = vals[v]
+		}
+		var ovals = {}
+		Object.keys(dvals).sort().forEach(function(key) {
+		    ovals[key] = dvals[key];
+		});
+		var data = []
+		for (var v in ovals){
+		    const item = [parseInt(v), ovals[v]]
+		    data.push(item)
+		}
+		console.log(data)
+		Highcharts.chart('goalchart'+g, {
+		    chart: {
+			type: 'spline',
+			marginBottom: 25
+		    },
+		    xAxis: {
+			type: 'datetime',
+			dateTimeLabelFormats: { 
+			    month: '%e. %b',
+			    year: '%b'
+			},
+			title: {text: ''}
+		    },
+		    yAxis: {
+			title: {text: ''}
+		    },
+		    plotOptions: {
+			spline: {
+			    marker: {
+				enabled: true
+			    }
+			}
+		    },
+		    title: { text: '' },
+		    series: [{
+			name: "Winter 2014-2015",
+			data: data			
+		    }]						
+		})
+	    }
+	}
+    });
 }
 
 function getMax(arr, prop) {

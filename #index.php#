@@ -97,7 +97,7 @@ echo "</script>"; */
     <a href="../dashboard/" class="toolbutton">dashboard</a>
     <a id="mergebutton" class="toolbuttonright">merge</a>
     <a id="deleteaction" class="toolbuttonright">delete</a> 
-    <div id="goalaction">Goals</div>
+    <div style="display: none" id="goalaction">Goals</div>
 </div>
 
 <!-- common -->
@@ -186,7 +186,7 @@ echo "</script>"; */
  </div> <!-- goal-page -->
 
 <div id="viewgoalpage">
-    <div id="viewgoalheader">
+    <div id="viewgoaolheader">
        <h3 id="viewgoaltitle">Goals for scope <span id="viewgoalscope"></span></h3>
        <div class="dbutton dslected" id="closeviewgoalbut">close</div>
     </div>

@@ -79,6 +79,30 @@
     font-weight: bold;
 }
 
+.closebutton {
+    width: 80%;
+    text-align:center;
+    vertical-align: middle;
+    padding: 15px 15px 15px 15px;
+    margin-right: 10%;
+    margin-left: 10%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background: #448;
+    color: #eee;
+    float: left;
+    margin-top: 20px;
+    border-radius: 5px;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+
+#existinggoalssection{
+    margin-top: 20px;
+}
+
+
 .dselected {
     background: #484;
     color: #eee;
@@ -254,7 +278,7 @@
     background: #eee;
     font-size: 16px;
     border: 2px solid white;
-    height: 100px;
+    height: 150px;
 }
 
 .goallabel{
